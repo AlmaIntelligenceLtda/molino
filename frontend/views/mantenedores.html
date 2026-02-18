@@ -1,0 +1,480 @@
+<div class="content-wrapper">
+  <div class="page-header">
+    <h3 class="page-title">Mantenedores</h3>
+  </div>
+
+  <ul class="nav nav-tabs" id="mantenedoresTabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="tabProvLink" data-toggle="tab" href="#tabProv" role="tab">Proveedores</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabProdLink" data-toggle="tab" href="#tabProd" role="tab">Insumos/Granos</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabProdTerminadoLink" data-toggle="tab" href="#tabProdTerminado" role="tab">Productos Terminados</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabChoferLink" data-toggle="tab" href="#tabChofer" role="tab">Choferes</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabCamionLink" data-toggle="tab" href="#tabCamion" role="tab">Camiones</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabCarroLink" data-toggle="tab" href="#tabCarro" role="tab">Carros</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabClientesLink" data-toggle="tab" href="#tabClientes" role="tab">Clientes</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabSucursalesLink" data-toggle="tab" href="#tabSucursales" role="tab">Sucursales</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabBodegasLink" data-toggle="tab" href="#tabBodegas" role="tab">Bodegas &amp; Silos</a>
+    </li>
+  </ul>
+
+  <div class="tab-content pt-3" id="mantenedoresTabsContent">
+    <div class="tab-pane fade show active" id="tabProv" role="tabpanel" aria-labelledby="tabProvLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Proveedores</h4>
+          <form id="formProveedorMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label for="provRutMant">RUT</label>
+                <input type="text" id="provRutMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="provRazonMant">Razón Social</label>
+                <input type="text" id="provRazonMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="provAliasMant">Alias</label>
+                <input type="text" id="provAliasMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="provTelefonoMant">Teléfono</label>
+                <input type="text" id="provTelefonoMant" class="form-control" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="provEmailMant">Email</label>
+                <input type="email" id="provEmailMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-6 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Guardar Proveedor</button>
+              </div>
+            </div>
+          </form>
+          <table class="table table-striped" id="tablaProveedores">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>RUT</th>
+                <th>Razón Social</th>
+                <th>Alias</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabProd" role="tabpanel" aria-labelledby="tabProdLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Productos Agrícolas</h4>
+          <form id="formProductoMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="prodNombreMant">Nombre</label>
+                <input type="text" id="prodNombreMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="prodCodigoMant">Código</label>
+                <input type="text" id="prodCodigoMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="prodDescripcionMant">Descripción</label>
+                <input type="text" id="prodDescripcionMant" class="form-control" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Producto</button>
+          </form>
+          <table class="table table-striped" id="tablaProductos">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Código</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabProdTerminado" role="tabpanel" aria-labelledby="tabProdTerminadoLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Harinas y Subproductos (Terminados)</h4>
+          <form id="formProdTerminadoMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label>Nombre</label>
+                <input type="text" id="ptNombreMant" class="form-control" placeholder="Ej: Harina 000" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label>SKU / Código</label>
+                <input type="text" id="ptSkuMant" class="form-control" placeholder="HRN-000" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label>Tipo</label>
+                <select id="ptTipoMant" class="form-control">
+                  <option value="Harina">Harina</option>
+                  <option value="Semita">Semita</option>
+                  <option value="Afrecho">Afrecho</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+              </div>
+            </div>
+          </form>
+          <table class="table table-striped" id="tablaProdTerminados">
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Stock Actual</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabChofer" role="tabpanel" aria-labelledby="tabChoferLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Choferes</h4>
+          <form id="formChoferMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label for="choferNombreMant">Nombre</label>
+                <input type="text" id="choferNombreMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="choferRutMant">RUT</label>
+                <input type="text" id="choferRutMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="choferTelefonoMant">Teléfono</label>
+                <input type="text" id="choferTelefonoMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="choferEmailMant">Email</label>
+                <input type="email" id="choferEmailMant" class="form-control" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Chofer</button>
+          </form>
+          <table class="table table-striped" id="tablaChoferes">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabCamion" role="tabpanel" aria-labelledby="tabCamionLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Camiones</h4>
+          <form id="formCamionMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label for="camionPatenteMant">Patente</label>
+                <input type="text" id="camionPatenteMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="camionMarcaMant">Marca</label>
+                <input type="text" id="camionMarcaMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="camionModeloMant">Modelo</label>
+                <input type="text" id="camionModeloMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="camionCapacidadMant">Capacidad (kg)</label>
+                <input type="number" id="camionCapacidadMant" class="form-control" min="0" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Camión</button>
+          </form>
+          <table class="table table-striped" id="tablaCamiones">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Patente</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Capacidad (kg)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabCarro" role="tabpanel" aria-labelledby="tabCarroLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Carros / Remolques</h4>
+          <form id="formCarroMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label for="carroPatenteMant">Patente</label>
+                <input type="text" id="carroPatenteMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="carroMarcaMant">Marca</label>
+                <input type="text" id="carroMarcaMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="carroModeloMant">Modelo</label>
+                <input type="text" id="carroModeloMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="carroCapacidadMant">Capacidad (kg)</label>
+                <input type="number" id="carroCapacidadMant" class="form-control" min="0" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Carro</button>
+          </form>
+          <table class="table table-striped" id="tablaCarros">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Patente</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Capacidad (kg)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabClientes" role="tabpanel" aria-labelledby="tabClientesLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Clientes</h4>
+          <form id="formClienteMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label for="cliRutMant">RUT</label>
+                <input type="text" id="cliRutMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-5">
+                <label for="cliRazonMant">Razón Social</label>
+                <input type="text" id="cliRazonMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="cliFantasiaMant">Nombre Fantasía</label>
+                <input type="text" id="cliFantasiaMant" class="form-control" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="cliTelefonoMant">Teléfono</label>
+                <input type="text" id="cliTelefonoMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="cliEmailMant">Email Facturación</label>
+                <input type="email" id="cliEmailMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+              </div>
+            </div>
+          </form>
+
+          <table class="table table-striped" id="tablaClientesMant">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>RUT</th>
+                <th>Razón Social</th>
+                <th>Nombre Fantasía</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabSucursales" role="tabpanel" aria-labelledby="tabSucursalesLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Sucursales</h4>
+          <form id="formSucursalMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="sucursalNombreMant">Nombre</label>
+                <input type="text" id="sucursalNombreMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="sucursalCiudadMant">Ciudad</label>
+                <input type="text" id="sucursalCiudadMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="sucursalTelefonoMant">Teléfono</label>
+                <input type="text" id="sucursalTelefonoMant" class="form-control" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-8">
+                <label for="sucursalDireccionMant">Dirección</label>
+                <input type="text" id="sucursalDireccionMant" class="form-control" />
+              </div>
+              <div class="form-group col-md-4 d-flex align-items-center">
+                <div class="form-check mt-4">
+                  <input type="checkbox" class="form-check-input" id="sucursalMatrizMant" />
+                  <label class="form-check-label" for="sucursalMatrizMant">Es matriz</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Sucursal</button>
+          </form>
+
+          <table class="table table-striped" id="tablaSucursalesMant">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Teléfono</th>
+                <th>Matriz</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabBodegas" role="tabpanel" aria-labelledby="tabBodegasLink">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h4 class="card-title">Bodegas</h4>
+          <form id="formBodegaMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="bodegaNombreMant">Nombre</label>
+                <input type="text" id="bodegaNombreMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="bodegaSucursalMant">Sucursal</label>
+                <select id="bodegaSucursalMant" class="form-control">
+                  <option value="">(Opcional) Asociar a sucursal</option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="bodegaDescripcionMant">Descripción</label>
+                <input type="text" id="bodegaDescripcionMant" class="form-control" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Bodega</button>
+          </form>
+          <div class="table-responsive">
+            <table class="table table-striped" id="tablaBodegasMant">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Sucursal</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Silos</h4>
+          <form id="formSiloMant" class="mb-3">
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label for="siloCodigoMant">Código</label>
+                <input type="text" id="siloCodigoMant" class="form-control" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="siloBodegaMant">Bodega</label>
+                <select id="siloBodegaMant" class="form-control" required>
+                  <option value="">Seleccione bodega...</option>
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="siloCapacidadMant">Capacidad Máx. (kg)</label>
+                <input type="number" id="siloCapacidadMant" class="form-control" min="0" required />
+              </div>
+              <div class="form-group col-md-3">
+                <label for="siloDescripcionMant">Descripción</label>
+                <input type="text" id="siloDescripcionMant" class="form-control" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Silo</button>
+          </form>
+
+          <div class="table-responsive">
+            <table class="table table-striped" id="tablaSilosMant">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Sucursal</th>
+                  <th>Bodega</th>
+                  <th>Código</th>
+                  <th>Capacidad (kg)</th>
+                  <th>Nivel actual (kg)</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

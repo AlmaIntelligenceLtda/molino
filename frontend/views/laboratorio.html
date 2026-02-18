@@ -1,0 +1,181 @@
+<div class="content-wrapper">
+  <div class="page-header">
+    <h3 class="page-title">Laboratorio</h3>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <ul class="nav nav-tabs" id="labTabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="registro-tab" data-toggle="tab" href="#registro" role="tab" aria-controls="registro" aria-selected="true">Registro</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="listado-tab" data-toggle="tab" href="#listado" role="tab" aria-controls="listado" aria-selected="false">Listado</a>
+            </li>
+          </ul>
+
+          <div class="tab-content mt-3" id="labTabsContent">
+            <div class="tab-pane fade show active" id="registro" role="tabpanel" aria-labelledby="registro-tab">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title mb-0">Registro de Calidad por Recepción</h4>
+                <div class="form-inline">
+                  <input id="laboratorioRecepcionId" class="form-control mr-2" style="min-width: 320px;" placeholder="Escanea ticket o ingresa código" autocomplete="off" />
+                  <button id="btnCargarRecepcion" class="btn btn-primary d-none">Cargar</button>
+                </div>
+              </div>
+
+              <div id="labBloqueadoMsg" class="alert alert-warning d-none">
+                Selecciona una recepción para habilitar el formulario.
+              </div>
+
+              <form id="formLaboratorio">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Proveedor / Cliente</label>
+                      <input id="labProveedor" class="form-control" readonly />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Producto</label>
+                      <input id="labProducto" class="form-control" readonly />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Neto Físico (kg)</label>
+                      <input id="labNetoFisico" class="form-control" readonly />
+                    </div>
+                  </div>
+                  <div class="col-md-3" id="grupoPrecioPactado">
+                    <div class="form-group">
+                      <label>Precio Pactado</label>
+                      <input id="labPrecioPactado" class="form-control" readonly />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Humedad (%)</label>
+                      <input id="humedad" type="number" step="0.01" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Impurezas (%)</label>
+                      <input id="impurezas" type="number" step="0.01" class="form-control" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>PH</label>
+                      <input id="pesoHectolitrico" type="number" step="0.01" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Proteína (%)</label>
+                      <input id="proteina" type="number" step="0.01" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Gluten Wet</label>
+                      <input id="gluten" type="number" step="0.01" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Índice de Caída</label>
+                      <input id="indiceCaida" type="number" step="1" class="form-control" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Granos Chuzos</label>
+                      <input id="granosChuzos" type="number" step="0.01" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Punta Negra</label>
+                      <input id="puntaNegra" type="number" step="0.01" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Observaciones</label>
+                      <input id="labObservaciones" class="form-control" />
+                    </div>
+                  </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Desc. Humedad (kg)</label>
+                      <input id="descuentoHumedad" class="form-control" readonly />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Desc. Impurezas (kg)</label>
+                      <input id="descuentoImpurezas" class="form-control" readonly />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label id="labelNetoPagar">Neto a Pagar (kg)</label>
+                      <input id="pesoNetoPagar" class="form-control" readonly />
+                    </div>
+                  </div>
+                  <div class="col-md-3" id="grupoTotalAprox">
+                    <div class="form-group">
+                      <label>Total (aprox.)</label>
+                      <input id="totalPagarLab" class="form-control" readonly />
+                    </div>
+                  </div>
+                </div>
+
+                <button id="btnGuardarLaboratorio" type="submit" class="btn btn-success">Guardar Laboratorio</button>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="listado" role="tabpanel" aria-labelledby="listado-tab">
+              <table id="tablaLaboratorioRecepciones" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Proveedor / Cliente</th>
+                    <th>Producto</th>
+                    <th>Neto (kg)</th>
+                    <th>Estado</th>
+                    <th>Laboratorio</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+</div>

@@ -1,0 +1,164 @@
+<!-- components/inicio.html -->
+<div id="menuInicio" class="container-fluid">
+  
+  <!-- Onboarding Widget Container -->
+  <div id="onboardingContainer" class="mb-4"></div>
+
+  <div class="row mb-4">
+    <div class="col-md-9">
+      <h3><strong>Hola!</strong> <span id="nombreUsuarioDashboard" class="name font-weight-bold mb-0">Usuario</span>
+      </h3>
+    </div>
+    <div class="col-md-3 text-right">
+      <img src="../assets/images/logo.png" class="img-thumbnail" width="50px">
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardUsuarios">
+      <a href="#" data-page="usuarios" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Usuarios</div>
+            <div class="description">Gestión de usuarios</div>
+          </div>
+          <div class="icon"><i data-feather="users"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardCompany">
+      <a href="#" data-page="company" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Mi Compañía</div>
+            <div class="description">Datos de la empresa</div>
+          </div>
+          <div class="icon"><i data-feather="briefcase"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardSucursales">
+      <a href="#" data-page="sucursales" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Sucursales</div>
+            <div class="description">Gestión de sucursales</div>
+          </div>
+          <div class="icon"><i data-feather="map-pin"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardBodegas">
+      <a href="#" data-page="bodegas" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Bodegas</div>
+            <div class="description">Gestión de bodegas</div>
+          </div>
+          <div class="icon"><i data-feather="box"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardMantenedores">
+      <a href="#" data-page="mantenedores" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Mantenedores</div>
+            <div class="description">Catálogos y parámetros</div>
+          </div>
+          <div class="icon"><i data-feather="settings"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardRecepcion">
+      <a href="#" data-page="recepcion" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Recepción</div>
+            <div class="description">Ingreso por báscula</div>
+          </div>
+          <div class="icon"><i data-feather="truck"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardProduccion">
+      <a href="#" data-page="produccion" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Producción</div>
+            <div class="description">Molienda y Rendimiento</div>
+          </div>
+          <div class="icon"><i data-feather="cpu"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardLaboratorio">
+      <a href="#" data-page="laboratorio" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Laboratorio</div>
+            <div class="description">Control de calidad por recepción</div>
+          </div>
+          <div class="icon"><i data-feather="activity"></i></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4 mb-4 card-dashboard" id="cardReportes">
+      <a href="#" data-page="reportes" class="card card-isola shadow h-100 text-decoration-none">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="title">Reportes</div>
+            <div class="description">Estadísticas y métricas</div>
+          </div>
+          <div class="icon"><i data-feather="bar-chart-2"></i></div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</div>
+<style>
+  .card-isola {
+    background-color: #fff;
+    border-left: 5px solid #FFB74D;
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+  }
+
+  .card-isola:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-isola .card-body {
+    padding: 1rem;
+  }
+
+  .card-isola .title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #4169E1;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .card-isola .description {
+    font-size: 1rem;
+    color: #000;
+    font-weight: bold;
+  }
+
+  .card-isola .icon {
+    color: #FFB74D;
+    font-size: 1.5rem;
+  }
+</style>

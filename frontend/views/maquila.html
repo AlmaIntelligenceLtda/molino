@@ -1,0 +1,259 @@
+<div class="content-wrapper">
+  <div class="page-header">
+    <h3 class="page-title">Módulo de Maquila</h3>
+    <p class="text-muted mb-0">Acreditar harina por trigo depositado y registrar retiros. Configurar porcentajes de trabajo (54%, 60%, 50%).</p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <p class="text-muted small mb-2"><strong>Pestañas:</strong> Operación (recepciones y retiros) · Configuración (porcentajes de trabajo)</p>
+          <ul class="nav nav-tabs nav-tabs-primary" id="maquilaTabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="recepcion-tab" data-toggle="tab" href="#maquilaRecepcion" role="tab" aria-controls="maquilaRecepcion" aria-selected="true"><strong>Recepción de Trigo</strong> — Ingreso Express</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="operacion-tab" data-toggle="tab" href="#maquilaOperacion" role="tab" aria-controls="maquilaOperacion" aria-selected="false"><strong>Operación</strong> — Acreditar y Retiros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="config-tab" data-toggle="tab" href="#maquilaConfig" role="tab" aria-controls="maquilaConfig" aria-selected="false"><strong>Configuración</strong> — Porcentajes</a>
+            </li>
+          </ul>
+
+          <div class="tab-content mt-3" id="maquilaTabsContent">
+
+            <!-- TAB RECEPCIÓN EXPRESS -->
+            <div class="tab-pane fade show active" id="maquilaRecepcion" role="tabpanel" aria-labelledby="recepcion-tab">
+              <div class="card bg-light border-primary mb-4">
+                <div class="card-body">
+                  <h5 class="card-title text-primary"><i class="mdi mdi-truck-fast"></i> Nueva Recepción de Trigo (Express)</h5>
+                  <p class="text-muted small">Use este formulario para registrar ingresos de particulares o vehículos menores que no pasan por romana de camiones.</p>
+                  
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <label>Cliente / Productor</label>
+                      <div class="d-flex align-items-center">
+                        <select id="recepcionClienteId" class="form-control flex-grow-1"></select>
+                        <button type="button" id="btnNuevoClienteRecepcion" class="btn btn-outline-secondary btn-sm ml-2" title="No encuentra el cliente? Crear nuevo">
+                          <i class="fas fa-user-plus"></i>
+                        </button>
+                      </div>
+                      <small class="text-muted">¿No encuentra el cliente? <a href="#" id="linkCrearClienteRecepcion">Crear nuevo</a></small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <label>Chofer / Vehículo (Opcional)</label>
+                      <input type="text" id="recepcionChofer" class="form-control" placeholder="Ej: Juan Pérez / Camioneta Roja" />
+                    </div>
+                  </div>
+
+                  <div class="row align-items-end">
+                     <div class="col-md-3 mb-3">
+                      <label>Peso Bruto (kg)</label>
+                      <input type="number" id="recepcionBruto" class="form-control" placeholder="0" min="0" />
+                      <small class="form-text text-muted">Peso total con carga</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label>Peso Tara (kg)</label>
+                      <input type="number" id="recepcionTara" class="form-control" placeholder="0" min="0" />
+                      <small class="form-text text-muted">Peso vehículo vacío</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label><strong>Peso Neto (kg)</strong></label>
+                      <input type="number" id="recepcionNeto" class="form-control font-weight-bold" placeholder="0" min="1" />
+                      <small class="form-text text-muted">Calculado o manual</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <button type="button" id="btnRegistrarRecepcion" class="btn btn-primary mb-4">
+                        <i class="mdi mdi-check"></i> Registrar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB OPERACIÓN -->
+            <div class="tab-pane fade" id="maquilaOperacion" role="tabpanel" aria-labelledby="operacion-tab">
+              <div class="row">
+                <!-- Acreditar harina (recepción maquila → crédito cliente) -->
+                <div class="col-md-12 mb-4">
+                  <h5 class="mb-3">Acreditar harina (trigo ya molido)</h5>
+                  <p class="text-muted small">Seleccione una recepción maquila pendiente y el tipo de trabajo para calcular los kg de harina a acreditar al cliente.</p>
+                  <div class="table-responsive mb-3">
+                    <table class="table table-sm table-bordered" id="tablaRecepcionesPendientes">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Ticket</th>
+                          <th>Cliente</th>
+                          <th>Producto</th>
+                          <th>Neto (kg)</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                  <div id="formAcreditar" class="card bg-light d-none">
+                    <div class="card-body">
+                      <h6>Acreditar harina</h6>
+                      <div class="row">
+                        <div class="col-md-3">
+                          <label>Recepción</label>
+                          <input type="text" id="acreditarTicket" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-2">
+                          <label>Tipo de trabajo</label>
+                          <select id="acreditarTipoTrabajo" class="form-control"></select>
+                        </div>
+                        <div class="col-md-2">
+                          <label>Producto harina</label>
+                          <select id="acreditarProductoHarina" class="form-control"></select>
+                        </div>
+                        <div class="col-md-2">
+                          <label>Kg a acreditar</label>
+                          <input type="number" id="acreditarKg" class="form-control" min="0.01" step="0.01" />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                          <button type="button" id="btnAcreditar" class="btn btn-primary">Acreditar</button>
+                        </div>
+                      </div>
+                      <input type="hidden" id="acreditarRecepcionId" />
+                      <input type="hidden" id="acreditarClienteId" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Retiro de harina -->
+                <div class="col-md-12">
+                  <h5 class="mb-3">Registrar retiro de harina</h5>
+                  <div class="alert alert-info d-none" id="retiroSaldoInfo">
+                    <i class="fas fa-info-circle"></i> Seleccione cliente y producto para ver saldo.
+                  </div>
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-3">
+                          <label>Cliente</label>
+                          <select id="retiroClienteId" class="form-control"></select>
+                        </div>
+                        <div class="col-md-3">
+                          <label>Producto harina</label>
+                          <select id="retiroProductoHarinaId" class="form-control"></select>
+                        </div>
+                        <div class="col-md-2">
+                          <label>Kg a retirar</label>
+                          <input type="number" id="retiroKg" class="form-control" min="0.01" step="0.01" />
+                        </div>
+                        <div class="col-md-2">
+                          <label>Observación</label>
+                          <input type="text" id="retiroObservacion" class="form-control" placeholder="Opcional" />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                          <button type="button" id="btnRetiro" class="btn btn-warning">Registrar retiro</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB CONFIGURACIÓN -->
+            <div class="tab-pane fade" id="maquilaConfig" role="tabpanel" aria-labelledby="config-tab">
+              <h5 class="mb-3">Porcentajes de trabajo de maquila</h5>
+              <p class="text-muted small">Defina los tipos de trabajo (ej. Trabajo 54%, 60%, 50%) y el producto terminado (harina) asociado. Se usan al acreditar harina al cliente.</p>
+
+              <div class="card mb-4">
+                <div class="card-header">Nuevo tipo de trabajo</div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <label>Nombre</label>
+                      <input type="text" id="configNombre" class="form-control" placeholder="Ej: Trabajo 54%" />
+                    </div>
+                    <div class="col-md-2">
+                      <label>Porcentaje (%)</label>
+                      <input type="number" id="configPorcentaje" class="form-control" min="0.01" max="100" step="0.01" placeholder="54" />
+                    </div>
+                    <div class="col-md-4">
+                      <label>Producto harina (opcional)</label>
+                      <select id="configProductoHarinaId" class="form-control">
+                        <option value="">— Sin asociar —</option>
+                      </select>
+                      <small id="configProductoHarinaHint" class="text-muted d-none">Cree productos terminados (harina) en Producción para ver opciones aquí.</small>
+                    </div>
+                    <div class="col-md-2">
+                      <label>Orden</label>
+                      <input type="number" id="configOrden" class="form-control" value="0" />
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                      <button type="button" id="btnAgregarPorcentaje" class="btn btn-primary">Agregar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-bordered" id="tablaPorcentajes">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Porcentaje</th>
+                      <th>Producto harina</th>
+                      <th>Activo</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Crear Cliente (mismos datos que mantenedor) -->
+<div class="modal fade" id="modalNuevoClienteMaquila" tabindex="-1" role="dialog" aria-labelledby="modalNuevoClienteMaquilaLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalNuevoClienteMaquilaLabel">Crear nuevo cliente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form id="formNuevoClienteMaquila">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="maquilaCliRut">RUT</label>
+            <input type="text" id="maquilaCliRut" class="form-control" required />
+            <small id="maquilaCliRutError" class="text-danger d-none">RUT inválido</small>
+          </div>
+          <div class="form-group">
+            <label for="maquilaCliRazon">Razón Social</label>
+            <input type="text" id="maquilaCliRazon" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="maquilaCliFantasia">Nombre Fantasía</label>
+            <input type="text" id="maquilaCliFantasia" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="maquilaCliTelefono">Teléfono</label>
+            <input type="text" id="maquilaCliTelefono" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="maquilaCliEmail">Email Facturación</label>
+            <input type="email" id="maquilaCliEmail" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar y usar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

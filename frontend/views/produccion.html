@@ -1,0 +1,360 @@
+<div class="content-wrapper">
+  <div class="page-header">
+    <h3 class="page-title">Módulo de Producción (Corazón Industrial)</h3>
+  </div>
+
+  <style>
+    /* Estilos para los Gauges y elementos de producción */
+    .gauge-container {
+      position: relative;
+      height: 150px;
+      margin-bottom: 30px;
+    }
+    .gauge-label {
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    .stats-card-mini {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 4px solid #4169E1;
+        height: 100%;
+    }
+    .op-card {
+        transition: transform 0.2s;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        background: white;
+    }
+    .op-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+  </style>
+
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <ul class="nav nav-tabs" id="produccionTabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="tablero-tab" data-toggle="tab" href="#prodTablero" role="tab" aria-controls="prodTablero" aria-selected="true">Tablero de Control</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="ordenes-tab" data-toggle="tab" href="#prodOrdenes" role="tab" aria-controls="prodOrdenes" aria-selected="false">Monitor de Molino</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="historial-tab" data-toggle="tab" href="#prodHistorial" role="tab" aria-controls="prodHistorial" aria-selected="false">Historial de Moliendas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="formulas-tab" data-toggle="tab" href="#prodFormulas" role="tab" aria-controls="prodFormulas" aria-selected="false">Fórmulas / Recetas</a>
+            </li>
+          </ul>
+
+          <div class="tab-content mt-3" id="produccionTabsContent">
+            
+            <!-- 1. TABLERO DE CONTROL -->
+            <div class="tab-pane fade show active" id="prodTablero" role="tabpanel" aria-labelledby="tablero-tab">
+              <div class="row">
+                <div class="col-md-4 text-center border-right">
+                  <h6 class="text-muted text-uppercase mb-3">Eficiencia de Extracción</h6>
+                  <div class="gauge-container">
+                    <canvas id="gaugeExtraction"></canvas>
+                    <div class="gauge-label text-primary" id="valExtraction">0%</div>
+                  </div>
+                  <p class="small text-muted mt-2">Relación Harina / Trigo Molido</p>
+                </div>
+                <div class="col-md-4 text-center border-right">
+                  <h6 class="text-muted text-uppercase mb-3">Nivel de Merma</h6>
+                  <div class="gauge-container">
+                    <canvas id="gaugeMerma"></canvas>
+                    <div class="gauge-label text-warning" id="valMerma">0%</div>
+                  </div>
+                  <p class="small text-muted mt-2">Límite Tolerable: <span id="valMermaLimite">2.0</span>%</p>
+                </div>
+                <div class="col-md-4">
+                  <div class="stats-card-mini">
+                    <h6 class="text-uppercase mb-3">Último Turno Finalizado</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Trigo Procesado:</span>
+                        <strong id="valTrigoActual">0 Kg</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Harina Resultante:</span>
+                        <strong id="valHarinaActual" class="text-primary">0 Kg</strong>
+                    </div>
+                    <hr>
+                    <div class="text-center pt-2">
+                        <button class="btn btn-primary btn-block" id="btnNuevaOP">
+                            <i class="fas fa-plus-circle"></i> NUEVA ORDEN DE PRODUCCIÓN
+                        </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. ÓRDENES ACTIVAS -->
+            <div class="tab-pane fade" id="prodOrdenes" role="tabpanel" aria-labelledby="ordenes-tab">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="card-title mb-0">Órdenes de Producción en el Molino</h4>
+                <button class="btn btn-sm btn-outline-info" id="btnRefrescarOPs">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+              </div>
+              <div id="opActivasContainer" class="row">
+                <!-- Se llena dinámicamente -->
+              </div>
+            </div>
+
+            <!-- 3. HISTORIAL -->
+            <div class="tab-pane fade" id="prodHistorial" role="tabpanel" aria-labelledby="historial-tab">
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered" id="tablaOrdenesProduccion">
+                  <thead>
+                    <tr>
+                      <th>OP #</th>
+                      <th>Fecha Inicio</th>
+                      <th>Producto</th>
+                      <th>Fórmula</th>
+                      <th>Meta (Kg)</th>
+                      <th>Estado</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 4. FÓRMULAS -->
+            <div class="tab-pane fade" id="prodFormulas" role="tabpanel" aria-labelledby="formulas-tab">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="card-title mb-0">Gestión de Recetas de Molienda</h4>
+                <button class="btn btn-primary" id="btnNuevaFormula">
+                    <i class="fas fa-flask"></i> NUEVA FÓRMULA
+                </button>
+              </div>
+              <div class="row" id="formulasContainer">
+                <!-- Se llena dinámicamente -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- Modal Nueva OP -->
+<div class="modal fade" id="modalNuevaOP" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Iniciar Nuevo Turno</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="formNuevaOP">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Sucursal</label>
+            <select class="form-control" name="sucursal_id" id="selOpSucursal" required></select>
+          </div>
+          <div class="form-group">
+            <label>Fórmula de Molienda</label>
+            <select class="form-control" name="formula_id" id="selOpFormula" required></select>
+            <div id="previewFormulaNuevaOP" class="mt-2 small text-muted" style="display:none;">
+              <hr class="my-1">
+              <b>Composición de la receta:</b>
+              <ul class="pl-0 mb-2 list-unstyled" id="listaPreviewFormula"></ul>
+              
+              <div id="sugerenciasMetas" class="mb-3">
+                <small class="text-muted d-block mb-2">Seleccionar meta rápida (Toneladas):</small>
+                <div class="d-flex flex-wrap" style="gap: 5px;">
+                  <button type="button" class="btn btn-xs btn-outline-primary btn-sugerencia-meta" data-value="5000">5 T</button>
+                  <button type="button" class="btn btn-xs btn-outline-primary btn-sugerencia-meta" data-value="10000">10 T</button>
+                  <button type="button" class="btn btn-xs btn-outline-primary btn-sugerencia-meta" data-value="20000">20 T</button>
+                  <button type="button" class="btn btn-xs btn-outline-primary btn-sugerencia-meta" data-value="30000">30 T</button>
+                  <button type="button" class="btn btn-xs btn-outline-primary btn-sugerencia-meta" data-value="50000">50 T</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kilos de Harina Esperados</label>
+            <input type="number" class="form-control" name="cantidad_objetivo" id="inputMetaOP" placeholder="Ej: 10000" required>
+          </div>
+          <div class="form-group">
+            <label>Fecha y Hora Programada</label>
+            <input type="datetime-local" class="form-control" name="fecha_planificada" required>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Crear Orden</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Finalizar OP -->
+<div class="modal fade" id="modalFinalizarOP" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Finalizar Molienda y Registrar Yield</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="formFinalizarOP">
+        <input type="hidden" id="hiddenOpId">
+        <input type="hidden" id="hiddenMermaTol">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 border-right">
+              <h6 class="text-primary mb-3"><i class="fas fa-sign-in-alt"></i> INSUMOS (TRIGO)</h6>
+              <div id="lotesProduccionContainer"></div>
+              <button type="button" class="btn btn-outline-primary btn-xs mt-2" id="btnAddLoteInsumo">
+                <i class="fas fa-plus"></i> Agregar Lote/Silo
+              </button>
+              <div class="form-group mt-4">
+                <label><b>Total Trigo Utilizado (Kg)</b></label>
+                <input type="number" class="form-control border-primary" id="inputTrigoMolido" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-success mb-3"><i class="fas fa-sign-out-alt"></i> PRODUCTOS TERMINADOS</h6>
+              <div class="form-group">
+                <label><b>Harina Obtenida (Kg)</b></label>
+                <input type="number" class="form-control border-success" id="inputHarinaObtenida" required>
+              </div>
+              <label class="mt-3">Subproductos Adicionales</label>
+              <div id="subproductosContainer"></div>
+              <button type="button" class="btn btn-outline-success btn-xs mt-2" id="btnAddSubproducto">
+                <i class="fas fa-plus"></i> Añadir Subproducto
+              </button>
+            </div>
+          </div>
+          <div class="row mt-4">
+              <div class="col-12">
+                  <div class="card bg-light border-0">
+                      <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                          <div>
+                              <small class="text-muted d-block text-uppercase">Rendimiento Calculado:</small>
+                              <span class="h5 mb-0">Extracción: <strong id="prevExtraccion">0%</strong> | Merma: <strong id="prevMerma">0%</strong></span>
+                          </div>
+                          <span id="prevStatus" class="badge badge-primary p-2">CALCULANDO</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Volver</button>
+          <button type="submit" class="btn btn-primary px-4">REGISTRAR CIERRE</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detalles Fórmula -->
+<div class="modal fade" id="modalDetallesFormula" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detallesFormulaTitulo">Detalles de la Fórmula</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="detallesFormulaDesc" class="text-muted"></p>
+        <hr>
+        <h6>Composición del Mix:</h6>
+        <ul class="list-group list-group-flush" id="listaIngredientesFormula"></ul>
+        <div class="alert alert-info mt-3 py-2 small">
+          <i class="fas fa-info-circle"></i> Merma máxima tolerada: <b id="detallesFormulaMerma"></b>%
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nueva Fórmula -->
+<div class="modal fade" id="modalNuevaFormula" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Configurar Nueva Receta</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="formNuevaFormula">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Nombre de la Fórmula</label>
+                <input type="text" class="form-control" name="nombre" placeholder="Ej: Molienda Premium" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Producto a Obtener</label>
+                <select class="form-control" name="producto_terminado_id" id="selFormulaProducto" required></select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="form-group">
+                <label>Descripción / Observaciones</label>
+                <input type="text" class="form-control" name="descripcion" placeholder="Detalles técnicos...">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Merma Tolerable (%)</label>
+                <input type="number" step="0.1" class="form-control" name="merma_tolerable_pct" value="2.0" required>
+              </div>
+            </div>
+          </div>
+          
+          <hr>
+          <h6><i class="fas fa-list"></i> Composición de la Mezcla (Insumos)</h6>
+          <p class="small text-muted">Indica cuántos Kg de cada trigo se requieren por cada Kg de harina producida.</p>
+          
+          <div id="ingredientesFormulaContainer">
+            <!-- Filas dinámicas -->
+          </div>
+          
+          <button type="button" class="btn btn-outline-info btn-sm mt-2" id="btnAddIngrediente">
+            <i class="fas fa-plus"></i> Agregar Insumo
+          </button>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Receta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

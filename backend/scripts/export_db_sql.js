@@ -1,0 +1,199 @@
+#!/usr/bin/env node
+import fs from "fs";
+import path from "path";
+import { sql } from "../db/connection.js";
+
+function escapeLiteral(val) {
+  if (val === null || val === undefined) return "NULL";
+  if (Buffer.isBuffer(val)) {
+    const hex = val.toString("hex");
+    return `decode('${hex}','hex')`;
+  }
+  if (val instanceof Date) return `'${val.toISOString()}'`;
+  if (typeof val === "boolean") return val ? 'TRUE' : 'FALSE';
+  if (typeof val === "number") return String(val);
+  if (typeof val === "object") {
+    // JSON-like
+    const s = JSON.stringify(val);
+    return `'${s.replace(/'/g, "''")}'`;
+  }
+  // string
+  return `'${String(val).replace(/'/g, "''")}'`;
+}
+
+async function getPublicTables() {
+  const rows = await sql.query(`SELECT tablename FROM pg_tables WHERE schemaname = $1 ORDER BY tablename`, ["public"]);
+  return rows.map(r => r.tablename);
+}
+
+async function getColumns(table) {
+  const rows = await sql.query(
+    `SELECT column_name, data_type, is_nullable, column_default, character_maximum_length, numeric_precision, numeric_scale, udt_name
+     FROM information_schema.columns
+     WHERE table_schema = $1 AND table_name = $2
+     ORDER BY ordinal_position`,
+    ["public", table]
+  );
+  return rows;
+}
+
+async function getConstraints(table) {
+  // Returns array of { conname, contype, condef }
+  const rows = await sql.query(
+    `SELECT c.conname, c.contype, pg_get_constraintdef(c.oid) AS condef
+     FROM pg_constraint c
+     JOIN pg_class t ON t.oid = c.conrelid
+     JOIN pg_namespace n ON n.oid = t.relnamespace
+     WHERE n.nspname = $1 AND t.relname = $2
+     ORDER BY c.conname`,
+    ["public", table]
+  );
+  return rows;
+}
+
+function columnTypeString(col) {
+  const dt = col.data_type;
+  if (dt === 'character varying' && col.character_maximum_length) return `varchar(${col.character_maximum_length})`;
+  if (dt === 'character' && col.character_maximum_length) return `char(${col.character_maximum_length})`;
+  if (dt === 'numeric' && col.numeric_precision) {
+    if (col.numeric_scale) return `numeric(${col.numeric_precision},${col.numeric_scale})`;
+    return `numeric(${col.numeric_precision})`;
+  }
+  // fallback to udt_name for types like _int4, etc.
+  return col.udt_name || dt;
+}
+
+async function dumpCreateTable(table) {
+  const cols = await getColumns(table);
+  const constraints = await getConstraints(table);
+
+  const fkConstraints = [];
+  const otherConstraints = [];
+
+  for (const c of constraints) {
+    if (c.contype === 'f') fkConstraints.push(c);
+    else otherConstraints.push(c);
+  }
+
+  const colDefs = cols.map(col => {
+    const pieces = [];
+    pieces.push(`"${col.column_name}" ${columnTypeString(col)}`);
+    if (col.column_default) pieces.push(`DEFAULT ${col.column_default}`);
+    if (col.is_nullable === 'NO') pieces.push('NOT NULL');
+    return pieces.join(' ');
+  });
+
+  // append non-FK constraints inline (PK, UNIQUE, CHECK)
+  for (const c of otherConstraints) {
+    colDefs.push(`CONSTRAINT "${c.conname}" ${c.condef}`);
+  }
+
+  const create = `CREATE TABLE IF NOT EXISTS "public"."${table}" (\n  ${colDefs.join(',\n  ')}\n);\n`;
+
+  // collect FK alter statements to apply later
+  const fkAlters = fkConstraints.map(c => `ALTER TABLE ONLY "public"."${table}" ADD CONSTRAINT "${c.conname}" ${c.condef};`);
+
+  // collect sequences from column defaults that reference nextval('seq'::regclass)
+  const seqs = [];
+  for (const col of cols) {
+    if (col.column_default && /nextval\('(.+?)'::regclass\)/.test(col.column_default)) {
+      const m = col.column_default.match(/nextval\('(.+?)'::regclass\)/);
+      if (m && m[1]) seqs.push({ seq: m[1], column: col.column_name });
+    }
+  }
+
+  return { create, fkAlters, seqs };
+}
+
+async function dumpTableInserts(table, outStream) {
+  const rows = await sql.query(`SELECT * FROM "public"."${table}"`);
+  if (!rows || rows.length === 0) return { inserted: 0 };
+
+  const keys = Object.keys(rows[0]);
+  const batchSize = 500; // rows per INSERT
+  for (let i = 0; i < rows.length; i += batchSize) {
+    const batch = rows.slice(i, i + batchSize);
+    const valuesSql = batch.map(r => `(${keys.map(k => escapeLiteral(r[k])).join(',')})`).join(',\n');
+    const insert = `INSERT INTO "public"."${table}" (${keys.map(k => `"${k}"`).join(',')}) VALUES\n${valuesSql};\n`;
+    outStream.write(insert);
+  }
+
+  return { inserted: rows.length };
+}
+
+async function main() {
+  try {
+    console.log('Generando volcado SQL (schema public) ...');
+    const tables = await getPublicTables();
+    if (!tables || tables.length === 0) {
+      console.log('No se encontraron tablas en public.');
+      return;
+    }
+
+    const outDir = path.resolve('backend', 'exports');
+    await fs.promises.mkdir(outDir, { recursive: true });
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const outPath = path.join(outDir, `db_dump_${ts}.sql`);
+    const out = fs.createWriteStream(outPath, { encoding: 'utf8' });
+
+    out.write('-- SQL dump generated by export_db_sql.js\n');
+    out.write('BEGIN;\n\n');
+
+    const allFkAlters = [];
+    const allSeqs = new Map(); // seqName -> { seq, table, column }
+
+    // Create table statements (without FK constraints)
+    for (const t of tables) {
+      const { create, fkAlters, seqs } = await dumpCreateTable(t);
+      out.write(`-- CREATE TABLE ${t}\n`);
+      out.write(create + '\n');
+      for (const s of seqs) {
+        // seq name may be schema-qualified
+        const seqName = s.seq.includes('.') ? s.seq : `public.${s.seq}`;
+        allSeqs.set(seqName, { seq: seqName, table: t, column: s.column });
+      }
+      for (const fk of fkAlters) allFkAlters.push(fk);
+    }
+
+    out.write('\n-- Sequences (will be created if referenced)\n');
+    for (const [seqName, info] of allSeqs.entries()) {
+      // sequence name may be public.seq
+      const parts = seqName.split('.');
+      const simpleName = parts.length === 2 ? parts[1] : seqName;
+      out.write(`CREATE SEQUENCE IF NOT EXISTS "${simpleName}";\n`);
+      out.write(`ALTER SEQUENCE "${simpleName}" OWNED BY "public"."${info.table}"."${info.column}";\n`);
+    }
+
+    out.write('\n-- Inserts\n');
+    // Inserts per table
+    for (const t of tables) {
+      out.write(`\n-- Data for table ${t}\n`);
+      await dumpTableInserts(t, out);
+    }
+
+    out.write('\n-- Foreign key constraints\n');
+    for (const fk of allFkAlters) out.write(fk + '\n');
+
+    // Set sequences to max values
+    out.write('\n-- Set sequence values\n');
+    for (const [seqName, info] of allSeqs.entries()) {
+      // get max value
+      const q = `SELECT MAX("${info.column}") as m FROM "public"."${info.table}"`;
+      const res = await sql.query(q);
+      const max = res && res[0] && res[0].m ? res[0].m : 0;
+      const parts = seqName.split('.');
+      const simpleName = parts.length === 2 ? parts[1] : seqName;
+      out.write(`SELECT setval('"${simpleName}"', ${max}, true);\n`);
+    }
+
+    out.write('\nCOMMIT;\n');
+    out.end();
+
+    console.log(`Dump escrito en: ${outPath}`);
+  } catch (err) {
+    console.error('Error generando dump SQL:', err);
+    process.exit(1);
+  }
+}
+
+main();

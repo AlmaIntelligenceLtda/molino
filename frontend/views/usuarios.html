@@ -1,0 +1,169 @@
+<div class="content-wrapper">
+  <div class="page-header">
+    <h3 class="page-title">Gestión de Usuarios</h3>
+  </div>
+
+  <!-- Formulario Crear Usuario -->
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Nuevo Usuario</h4>
+          <form id="formUsuario">
+            <div class="form-row">
+              <!-- RUT -->
+              <div class="form-group col-md-3">
+                <label for="rut">RUT</label>
+                <input type="text" id="rut" class="form-control" placeholder="Ej: 12345678-9" required />
+                <small id="rutError" class="text-danger d-none">RUT inválido</small>
+              </div>
+
+              <!-- Nombres -->
+              <div class="form-group col-md-3">
+                <label for="nombres">Nombres</label>
+                <input type="text" id="nombres" class="form-control" placeholder="Nombres" required />
+              </div>
+
+              <!-- Apellidos -->
+              <div class="form-group col-md-3">
+                <label for="apellidos">Apellidos</label>
+                <input type="text" id="apellidos" class="form-control" placeholder="Apellidos" required />
+              </div>
+
+              <!-- Email -->
+              <div class="form-group col-md-3">
+                <label for="email">Email</label>
+                <input type="text" id="email" class="form-control" placeholder="usuario@evoptica.cl" />
+                <div id="emailError" class="invalid-feedback d-none">
+                  Ingresa un nombre de usuario antes de @evoptica.cl
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <!-- Contraseña -->
+              <div class="form-group col-md-4">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" class="form-control" placeholder="Contraseña" required />
+              </div>
+
+              <!-- Rol -->
+              <div class="form-group col-md-4">
+                <label for="rol">Rol</label>
+                <select id="rol" class="form-control" required>
+                  <option value="">Selecciona Rol</option>
+                  <option value="administrador">Administrador</option>
+                  <option value="superusuario">Superusuario</option>
+                </select>
+              </div>
+
+              <!-- Estado (toggle) -->
+              <div class="form-group col-md-4">
+                <label for="activo" class="d-block">Estado</label>
+                <input type="checkbox" id="activo" checked data-toggle="toggle"
+                  data-on="<i class='fas fa-user-check'></i> Activo"
+                  data-off="<i class='fas fa-user-slash'></i> Inactivo" data-onstyle="success" data-offstyle="danger"
+                  data-width="160" data-height="40">
+              </div>
+            </div>
+
+            <!-- Botón -->
+            <div class="form-group mt-3">
+              <button type="submit" class="btn btn-primary">
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla Usuarios -->
+  <div class="row mt-4">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Usuarios Registrados</h4>
+          <table class="table table-striped" id="tablaUsuarios">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>RUT</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Email</th> <!-- 👈 agregado -->
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Usuario -->
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="formEditarUsuario">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Usuario</h5>
+          <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId" />
+          <div class="form-group">
+            <label>RUT</label>
+            <input type="text" id="editRut" class="form-control" required />
+            <small id="editRutError" class="text-danger d-none">RUT inválido</small>
+          </div>
+          <div class="form-group">
+            <label>Nombres</label>
+            <input type="text" id="editNombres" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label>Apellidos</label>
+            <input type="text" id="editApellidos" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="text" id="editEmail" class="form-control" placeholder="usuario@evoptica.cl" />
+            <div id="editEmailError" class="invalid-feedback d-none">
+              Ingresa un nombre de usuario antes de @evoptica.cl
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Rol</label>
+            <select id="editRol" class="form-control" required>
+              <option value="administrador">Administrador</option>
+              <option value="superusuario">Superusuario</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <!-- Estado (toggle) -->
+            <div class="form-group col-md-4">
+              <label for="editActivo" class="d-block">Estado</label>
+              <input type="checkbox" id="editActivo" checked data-toggle="toggle"
+                data-on="<i class='fas fa-user-check'></i> Activo" data-off="<i class='fas fa-user-slash'></i> Inactivo"
+                data-onstyle="success" data-offstyle="danger" data-width="160" data-height="40">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Nueva Contraseña (opcional)</label>
+            <input type="password" id="editPassword" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

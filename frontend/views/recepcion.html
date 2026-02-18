@@ -1,0 +1,194 @@
+<div class="content-wrapper">
+  <div class="page-header">
+    <h3 class="page-title">Recepción (Báscula)</h3>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Ingreso por etapas (escaneo)</h4>
+
+          <!-- Tabs principales de Recepción -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="tab-registro" data-tab="registro" href="#" role="tab" aria-controls="tabRegistro" aria-selected="true">Registros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab-listado" data-tab="listado" href="#" role="tab" aria-controls="tabListado" aria-selected="false">Listado de registros</a>
+            </li>
+          </ul>
+
+          <div class="tab-content mt-3">
+            <!-- TAB 1: Registros (todo lo existente) -->
+            <div class="tab-pane" id="tabRegistro" role="tabpanel" aria-labelledby="tab-registro">
+
+              <!-- Se removió la opción de retomar ticket existente; ahora el flujo inicia creando una recepción -->
+
+              <div class="mt-3 mb-2 font-weight-bold">Crear nueva recepción</div>
+
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Tipo Recepción</label>
+                    <select id="tipoRecepcion" class="form-control">
+                      <option value="compra">Compra</option>
+                      <option value="maquila">Maquila</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Proveedor (Compra)</label>
+                    <select id="proveedorId" class="form-control"></select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Cliente (Maquila)</label>
+                    <select id="clienteId" class="form-control"></select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Producto</label>
+                    <select id="productoAgricolaId" class="form-control"></select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Escanear Chofer</label>
+                    <input id="scanChofer" class="form-control" placeholder="Ej: CH-1-10" autocomplete="off" />
+                    <small class="text-muted" id="choferInfo"></small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Escanear Camión</label>
+                    <input id="scanCamion" class="form-control" placeholder="Ej: CA-1-22" autocomplete="off" />
+                    <small class="text-muted" id="camionInfo"></small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Escanear Carro (opcional)</label>
+                    <input id="scanCarro" class="form-control" placeholder="Ej: CR-1-7" autocomplete="off" />
+                    <small class="text-muted" id="carroInfo"></small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>N° Guía Despacho (opcional)</label>
+                    <input id="numeroGuia" class="form-control" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Observaciones</label>
+                    <input id="observacionesRecepcion" class="form-control" />
+                  </div>
+                </div>
+              </div>
+
+              <button id="btnCrearRecepcion" class="btn btn-primary">Crear Recepción</button>
+              <span class="ml-2" id="creacionMsg"></span>
+
+              <hr />
+
+              <div id="panelRecepcion" class="d-none">
+                <h5>Pesajes</h5>
+
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <div class="border p-3 d-flex justify-content-between flex-wrap">
+                      <div>
+                        <div><strong>Recepción ID:</strong> <span id="recId"></span></div>
+                        <div><strong>Estado:</strong> <span id="recEstado"></span></div>
+                        <div class="text-muted" style="font-size: 12px;">El ticket se emitirá cuando el pesaje esté completo.</div>
+                        <div class="mt-2">
+                          <a id="btnTicketSagPdf" href="#" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm">Imprimir ticket SAG (PDF)</a>
+                        </div>
+                      </div>
+                      <div class="mt-2 mt-sm-0">
+                        <div><strong>Bruto (kg):</strong> <span id="pesoBruto"></span></div>
+                        <div><strong>Tara (kg):</strong> <span id="pesoTara"></span></div>
+                        <div><strong>Neto Físico (kg):</strong> <span id="pesoNetoFisico"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-body">
+                            <h6 class="card-title">Realizar Peso</h6>
+                            <div class="form-row">
+                              <div class="col">
+                                <input id="inputBruto" type="number" class="form-control" placeholder="Bruto (kg)" />
+                              </div>
+                              <div class="col">
+                                <input id="motivoBruto" class="form-control" placeholder="Motivo Bruto (si manual)" />
+                              </div>
+                              <div class="col">
+                                <input id="inputTara" type="number" class="form-control" placeholder="Tara (kg)" />
+                              </div>
+                              <div class="col">
+                                <input id="motivoTara" class="form-control" placeholder="Motivo Tara (si manual)" />
+                              </div>
+                              <div class="col-auto">
+                                <button id="btnRealizarPeso" class="btn btn-primary">Realizar Peso</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+
+                <!-- El panel de ticket fue removido: el ticket se imprimirá automáticamente al presionar 'Realizar Peso' -->
+
+                
+              </div>
+
+            </div>
+
+            <!-- TAB 2: Listado de registros -->
+            <div class="tab-pane" id="tabListado" role="tabpanel" aria-labelledby="tab-listado">
+              <div class="mt-3">
+                <h5>Listado de registros</h5>
+                <p class="text-muted">Selecciona una recepción para verla en el tab Registros.</p>
+
+                <div class="table-responsive">
+                  <table class="table table-striped table-bordered" id="recepcionesTable">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Proveedor / Cliente</th>
+                        <th>Producto</th>
+                        <th>Estado</th>
+                        <th>Fecha entrada</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Filas cargadas dinámicamente por recepcion.js (cargarListadoRecepciones) -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

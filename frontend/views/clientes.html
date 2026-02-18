@@ -1,0 +1,165 @@
+<div class="content-wrapper"></div>
+  <div class="page-header">
+    <h3 class="page-title">Gestión de Clientes</h3>
+  </div>
+
+  <!-- Formulario Crear Cliente -->
+  <div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Nuevo Cliente</h4>
+          <form id="formCliente" enctype="multipart/form-data">
+            <div class="form-row">
+              <!-- RUT -->
+              <div class="form-group col-md-3">
+                <label for="nuevoRut">RUT</label>
+                <input type="text" id="nuevoRut" class="form-control" placeholder="Ej: 12345678-9" required />
+                <small id="rutErrorCliente" class="text-danger d-none">RUT inválido</small>
+              </div>
+
+              <!-- Nombre -->
+              <div class="form-group col-md-3">
+                <label for="nuevoNombre">Nombre</label>
+                <input type="text" id="nuevoNombre" class="form-control" placeholder="Nombre" required />
+              </div>
+
+              <!-- Telefono -->
+              <div class="form-group col-md-3">
+                <label for="nuevoTelefono">Teléfono</label>
+                <input type="text" id="nuevoTelefono" class="form-control" placeholder="Teléfono" />
+              </div>
+
+              <!-- Email -->
+              <div class="form-group col-md-3">
+                <label for="nuevoEmail">Email</label>
+                <input type="text" id="nuevoEmail" class="form-control" placeholder="correo@dominio.com" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <!-- Direccion -->
+              <div class="form-group col-md-4">
+                <label for="nuevaDireccion">Dirección</label>
+                <input type="text" id="nuevaDireccion" class="form-control" placeholder="Dirección" />
+              </div>
+
+              <!-- Ciudad -->
+              <div class="form-group col-md-4">
+                <label for="nuevaCiudad">Ciudad</label>
+                <input type="text" id="nuevaCiudad" class="form-control" placeholder="Ciudad" />
+              </div>
+
+              <!-- Comuna -->
+              <div class="form-group col-md-4">
+                <label for="nuevaComuna">Comuna</label>
+                <input type="text" id="nuevaComuna" class="form-control" placeholder="Comuna" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <!-- Foto (opcional) -->
+              <div class="form-group col-md-4">
+                <label for="nuevaFotoCliente">Foto (JPG/PNG, &lt;= 2MB)</label>
+                <input type="file" id="nuevaFotoCliente" class="form-control-file nuevaFotoCliente" accept="image/*" />
+                <img class="previsualizarCliente mt-2" src="" alt="" style="max-width:140px; display:none;" />
+              </div>
+            </div>
+
+            <!-- Botón -->
+            <div class="form-group mt-3">
+              <button type="submit" class="btn btn-primary">
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla Clientes -->
+  <div class="row mt-4">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Clientes Registrados</h4>
+          <table class="table table-striped" id="tablaClientes">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Foto</th>
+                <th>RUT</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Comuna</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Cliente -->
+<div class="modal fade" id="modalEditarCliente" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="formEditarCliente" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Cliente</h5>
+          <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editIdCliente" />
+          <div class="form-group">
+            <label>RUT</label>
+            <input type="text" id="editRutCliente" class="form-control" required />
+            <small id="editRutErrorCliente" class="text-danger d-none">RUT inválido</small>
+          </div>
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" id="editNombreCliente" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" id="editTelefonoCliente" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="text" id="editEmailCliente" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Dirección</label>
+            <input type="text" id="editDireccionCliente" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Ciudad</label>
+            <input type="text" id="editCiudadCliente" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Comuna</label>
+            <input type="text" id="editComunaCliente" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Foto actual</label>
+            <div>
+              <img id="previsualizarClienteEditar" src="" alt="" style="max-width:140px; display:none;" />
+              <input type="hidden" id="fotoActualCliente" />
+            </div>
+            <label class="mt-2">Cambiar foto (opcional)</label>
+            <input type="file" id="editarFotoCliente" class="form-control-file editarFotoCliente" accept="image/*" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

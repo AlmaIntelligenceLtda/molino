@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro - Molino</title>
+
+  <link rel="stylesheet" href="../assets/vendors/core/core.css" />
+  <link rel="stylesheet" href="../assets/vendors/sweetalert2/sweetalert2.min.css" />
+  <link rel="stylesheet" href="../assets/fonts/feather-font/css/iconfont.css" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <!-- <link rel="shortcut icon" href="../assets/images/logo.png" /> -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(-45deg, #ffc533, #ffb400, #6b4e2e, #000);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem; /* Reduced padding */
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 800px;
+      text-align: center;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    .login-wrapper {
+        display: flex;
+        width: 100%;
+        gap: 20px;
+    }
+    .col-form {
+        flex: 1;
+        padding: 10px;
+    }
+    .col-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-left: 1px solid #eee;
+        padding-left: 20px;
+    }
+
+    h3 {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-group input:focus {
+      border-color: #ffb400;
+      box-shadow: 0 0 5px rgba(255, 180, 0, 0.5);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: #ffb400;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-login:hover {
+      background: #e0a800;
+      transform: translateY(-2px);
+    }
+
+    .text-error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      min-height: 20px;
+    }
+
+    .footer-links {
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    .footer-links a {
+      color: #6b4e2e;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+        .login-wrapper {
+            flex-direction: column;
+        }
+        .col-info {
+            display: none;
+        }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="particles">
+    <!-- Particles handled by JS if copied, or just CSS background -->
+  </div>
+
+  <div class="container">
+    <div class="login-wrapper">
+        <div class="col-form">
+            <h3>Registro de Empresa</h3>
+            <form id="registerForm">
+              
+              <!-- Datos Empresa -->
+              <div class="input-group">
+                <label>Razón Social</label>
+                <input type="text" id="txtRazonSocial" required placeholder="Ej: Molinos del Sur SpA" />
+              </div>
+              <div class="input-group">
+                <label>RUT Empresa</label>
+                <input type="text" id="txtRutEmpresa" required placeholder="12.345.678-9" />
+              </div>
+
+              <!-- Datos Admin -->
+              <div class="input-group">
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                         <label>Nombre Admin</label>
+                         <input type="text" id="txtNombreAdmin" required />
+                    </div>
+                    <div style="flex:1;">
+                        <label>Apellido Admin</label>
+                        <input type="text" id="txtApellidoAdmin" required />
+                    </div>
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label>Email Corporativo (Admin)</label>
+                <input type="email" id="txtEmailAdmin" required placeholder="admin@empresa.com" />
+              </div>
+              <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" id="txtPassword" required placeholder="********" />
+              </div>
+
+              <button type="submit" class="btn-login" id="btnRegister">Registrar y Acceder</button>
+              <div class="text-error" id="text-error"></div>
+
+              <div class="footer-links">
+                ¿Ya tienes cuenta? <a href="login.html">Inicia Sesión aquí</a>
+              </div>
+            </form>
+        </div>
+        
+        <div class="col-info">
+             <i class="fas fa-industry fa-5x" style="color:#ffb400; margin-bottom:20px;"></i>
+             <h4>Sistema de Gestión Molinera</h4>
+             <p style="color:#666;">Controla recepción, laboratorio, producción y ventas en una sola plataforma SaaS.</p>
+        </div>
+    </div>
+  </div>
+
+  <script src="../assets/vendors/sweetalert2/sweetalert2.min.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<style>
+  .titulo {
+    font-weight: 900;
+    color: #000000;
+    font-family: 'Arial Black', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .titulo .ai {
+    font-weight: 800;
+    color: #4169E1 !important;
+    /* Fuerza el naranja suave */
+    display: inline;
+  }
+
+  /* Evita que los enlaces o encabezados sobrescriban el color */
+  .sidebar-brand,
+  .sidebar-brand h3,
+  .sidebar-brand span {
+    color: inherit !important;
+    text-decoration: none;
+  }
+</style>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <a href="/dashboard" class="sidebar-brand">
+      <h3 class="titulo"><span class="ai">MOLINO</span></h3>
+    </a>
+    <div class="sidebar-toggler not-active">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="sidebar-body">
+    <ul class="nav">
+      <!-- Categoría principal -->
+      <li class="nav-item nav-category">Accesos</li>
+
+      <li class="nav-item nav-menu" id="menuUsuarios">
+        <a href="#" class="nav-link" data-page="usuarios">
+          <i class="link-icon" data-feather="users"></i>
+          <span class="link-title">Usuarios</span>
+        </a>
+      </li>
+      <li class="nav-item nav-menu" id="menuCompany">
+        <a href="#" class="nav-link" data-page="company">
+          <i class="link-icon" data-feather="briefcase"></i>
+          <span class="link-title">Mi Compañía</span>
+        </a>
+      </li>
+      <li class="nav-item nav-menu" id="menuCuentaCorriente">
+        <a href="#" class="nav-link" data-page="cuenta-corriente">
+          <i class="link-icon" data-feather="file-text"></i>
+          <span class="link-title">Cuenta corriente</span>
+        </a>
+      </li>
+      <li class="nav-item nav-menu" id="menuMaquila">
+        <a href="#" class="nav-link" data-page="maquila">
+          <i class="link-icon" data-feather="layers"></i>
+          <span class="link-title">Maquila</span>
+        </a>
+      </li>
+      <li class="nav-item nav-menu" id="menuBodegas">
+        <a href="#" class="nav-link" data-page="bodegas">
+          <i class="link-icon" data-feather="box"></i>
+          <span class="link-title">Almacenamiento</span>
+        </a>
+      </li>
+
+      <li class="nav-item nav-menu" id="menuRecepcion">
+        <a href="#" class="nav-link" data-page="recepcion">
+          <i class="link-icon" data-feather="truck"></i>
+          <span class="link-title">Recepción</span>
+        </a>
+      </li>
+
+      <li class="nav-item nav-menu" id="menuLaboratorio">
+        <a href="#" class="nav-link" data-page="laboratorio">
+          <i class="link-icon" data-feather="activity"></i>
+          <span class="link-title">Laboratorio</span>
+        </a>
+      </li>
+
+      <li class="nav-item nav-menu" id="menuProduccion">
+        <a href="#" class="nav-link" data-page="produccion">
+          <i class="link-icon" data-feather="settings"></i>
+          <span class="link-title">Producción</span>
+        </a>
+      </li>
+
+      <li class="nav-item nav-menu" id="menuMantenedores">
+        <a href="#" class="nav-link" data-page="mantenedores">
+          <i class="link-icon" data-feather="settings"></i>
+          <span class="link-title">Mantenedores</span>
+        </a>
+      </li>
+
+    </ul>
+  </div>
+</nav>

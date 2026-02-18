@@ -1,0 +1,14 @@
+{
+  "compact": true,
+  "controlFlowFlattening": false,
+  "deadCodeInjection": false,
+  "debugProtection": false,
+  "selfDefending": false,
+  "disableConsoleOutput": true,
+  "renameGlobals": false,
+  "stringArray": true,
+  "stringArrayEncoding": ["rc4"],
+  "stringArrayThreshold": 1,
+  "unicodeEscapeSequence": true,
+  "transformObjectKeys": true
+}
