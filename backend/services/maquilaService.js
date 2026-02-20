@@ -212,6 +212,35 @@ export async function eliminarTipoTrabajoMaquila(empresaId, id) {
   return row || null;
 }
 
+/**
+ * Auto-acreditar una recepción maquila (cuando la empresa tiene "no acreditar"):
+ * usa el primer tipo de trabajo activo y registra CREDITO_HARINA_CONFIRMADO_KG.
+ */
+export async function autoAcreditarRecepcionMaquila(empresaId, usuarioId, recepcionId, clienteId, netoKg) {
+  const tipos = await sql`
+    SELECT id, nombre, porcentaje, producto_harina_id
+    FROM maquila_tipos_trabajo
+    WHERE empresa_id = ${empresaId} AND activo = true
+    ORDER BY orden ASC, id ASC
+    LIMIT 1
+  `;
+  const tipo = tipos[0];
+  if (!tipo) {
+    console.warn("Maquila: no hay tipo de trabajo para auto-acreditar; se omite movimiento.");
+    return null;
+  }
+  const kg = Math.round((Number(netoKg) * Number(tipo.porcentaje)) / 100);
+  if (kg <= 0) return null;
+  return registrarMovimientoMaquila(empresaId, usuarioId, {
+    cliente_id: clienteId,
+    recepcion_id: recepcionId,
+    producto_harina_id: tipo.producto_harina_id || null,
+    tipo_movimiento: "CREDITO_HARINA_CONFIRMADO_KG",
+    kg,
+    observacion: "Acreditación automática (config. no acreditar)"
+  });
+}
+
 /** Recepciones tipo maquila con peso listo (para acreditar harina). Excluye las que ya tienen crédito. */
 export async function listarRecepcionesMaquilaPendientesAcreditar(empresaId) {
   const rows = await sql`

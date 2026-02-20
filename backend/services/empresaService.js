@@ -54,3 +54,37 @@ export async function actualizarLogoUrl(empresaId, logoUrl) {
   `;
   return getEmpresaById(empresaId);
 }
+
+/**
+ * Obtiene la configuración global (JSON). Devuelve objeto; si no hay, {}.
+ */
+export async function getConfiguracion(empresaId) {
+  if (!empresaId) return {};
+  const [row] = await sql`
+    SELECT configuracion_global FROM empresas WHERE id = ${empresaId} LIMIT 1
+  `;
+  const raw = row?.configuracion_global;
+  if (raw === null || raw === undefined) return {};
+  if (typeof raw === "object") return raw;
+  try {
+    return typeof raw === "string" ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Actualiza solo la configuración global (merge con lo existente).
+ * data: { maquila_requiere_acreditar?: boolean, ... }
+ */
+export async function actualizarConfiguracion(empresaId, data) {
+  if (!empresaId || !data || typeof data !== "object") return getConfiguracion(empresaId);
+  const current = await getConfiguracion(empresaId);
+  const merged = { ...current, ...data };
+  await sql`
+    UPDATE empresas
+    SET configuracion_global = ${JSON.stringify(merged)}::jsonb, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${empresaId}
+  `;
+  return merged;
+}

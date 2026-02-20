@@ -76,8 +76,14 @@
             <!-- TAB OPERACIÓN -->
             <div class="tab-pane fade" id="maquilaOperacion" role="tabpanel" aria-labelledby="operacion-tab">
               <div class="row">
+                <!-- Mensaje cuando no se requiere acreditar -->
+                <div id="mensajeNoAcreditar" class="col-md-12 mb-4 d-none">
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <strong>Trigo se suma al ingresar.</strong> La configuración está en &quot;No acreditar&quot;: el trigo que ingresa por recepción maquila se suma automáticamente al cliente. No es necesario usar el paso de acreditar. Puede registrar recepciones en la pestaña <strong>Ingreso directo</strong>.
+                  </div>
+                </div>
                 <!-- Acreditar harina (recepción maquila → crédito cliente) -->
-                <div class="col-md-12 mb-4">
+                <div id="bloqueAcreditar" class="col-md-12 mb-4">
                   <h5 class="mb-3">Acreditar harina (trigo ya molido)</h5>
                   <p class="text-muted small">Seleccione una recepción maquila pendiente y el tipo de trabajo para calcular los kg de harina a acreditar al cliente.</p>
                   <div class="table-responsive mb-3">

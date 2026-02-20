@@ -7,7 +7,9 @@ import { fileURLToPath } from "url";
 import {
   getEmpresaById,
   actualizarEmpresa,
-  actualizarLogoUrl
+  actualizarLogoUrl,
+  getConfiguracion,
+  actualizarConfiguracion
 } from "../services/empresaService.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -94,6 +96,32 @@ router.put("/", requireUser, express.json(), async (req, res) => {
   } catch (err) {
     console.error("❌ Error al actualizar empresa:", err);
     res.status(500).json({ error: "Error al actualizar empresa" });
+  }
+});
+
+// GET /api/empresa/config - Configuración de la empresa (maquila, etc.)
+router.get("/config", requireUser, async (req, res) => {
+  try {
+    const empresaId = req.user.empresa_id;
+    if (!empresaId) return res.status(404).json({ error: "Usuario sin empresa asignada" });
+    const config = await getConfiguracion(empresaId);
+    res.json(config);
+  } catch (err) {
+    console.error("❌ Error al obtener config empresa:", err);
+    res.status(500).json({ error: "Error al obtener configuración" });
+  }
+});
+
+// PATCH /api/empresa/config - Actualizar configuración (merge)
+router.patch("/config", requireUser, express.json(), async (req, res) => {
+  try {
+    const empresaId = req.user.empresa_id;
+    if (!empresaId) return res.status(404).json({ error: "Usuario sin empresa asignada" });
+    const config = await actualizarConfiguracion(empresaId, req.body);
+    res.json(config);
+  } catch (err) {
+    console.error("❌ Error al actualizar config empresa:", err);
+    res.status(500).json({ error: "Error al actualizar configuración" });
   }
 });
 

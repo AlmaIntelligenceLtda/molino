@@ -13,6 +13,8 @@
   let tiposTrabajo = [];
   let recepcionesPendientes = [];
   let recepcionSeleccionada = null;
+  /** true = requiere paso "Acreditar"; false = el trigo se suma solo al ingresar */
+  let maquilaRequiereAcreditar = true;
   /** Al crear cliente desde modal: "recepcion" | "retiro" para saber en qué select dejar seleccionado el nuevo */
   let nuevoClienteTargetSelect = null;
 
@@ -77,20 +79,30 @@
 
   async function cargarDatos() {
     try {
-      const [clientesRes, prodRes, tiposTrabajoRes, recepcionesPendientesRes] = await Promise.all([
+      const [clientesRes, prodRes, tiposTrabajoRes, recepcionesPendientesRes, configRes] = await Promise.all([
         fetchJson("/api/clientes"),
         fetchJson("/api/produccion/productos-terminados").then((r) => (r && r.data) ? r.data : []).catch(() => []),
         fetchJson("/api/maquila/config/porcentajes"),
-        fetchJson("/api/maquila/recepciones-pendientes")
+        fetchJson("/api/maquila/recepciones-pendientes"),
+        fetchJson("/api/maquila/config").catch(() => ({ requiere_acreditar: true }))
       ]);
       clientes = Array.isArray(clientesRes) ? clientesRes : [];
       productosTerminados = Array.isArray(prodRes) ? prodRes : [];
       tiposTrabajo = Array.isArray(tiposTrabajoRes) ? tiposTrabajoRes : [];
       recepcionesPendientes = Array.isArray(recepcionesPendientesRes) ? recepcionesPendientesRes : [];
+      maquilaRequiereAcreditar = configRes && configRes.requiere_acreditar !== false;
+      aplicarVisibilidadAcreditar();
     } catch (err) {
       console.error("Error cargando datos maquila:", err);
       if (window.Swal) Swal.fire("Error", "No se pudieron cargar los datos", "error");
     }
+  }
+
+  function aplicarVisibilidadAcreditar() {
+    const bloque = document.getElementById("bloqueAcreditar");
+    const mensaje = document.getElementById("mensajeNoAcreditar");
+    if (bloque) bloque.classList.toggle("d-none", !maquilaRequiereAcreditar);
+    if (mensaje) mensaje.classList.toggle("d-none", maquilaRequiereAcreditar);
   }
 
   function renderRecepcionesPendientes() {

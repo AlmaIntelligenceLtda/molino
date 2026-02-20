@@ -2,6 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bwipjs from "bwip-js";
 
+import { getConfiguracion } from "../services/empresaService.js";
 import {
   obtenerSaldoHarina,
   registrarMovimientoMaquila,
@@ -12,7 +13,8 @@ import {
   actualizarTipoTrabajoMaquila,
   eliminarTipoTrabajoMaquila,
   listarRecepcionesMaquilaPendientesAcreditar,
-  registrarRecepcionDirecta
+  registrarRecepcionDirecta,
+  autoAcreditarRecepcionMaquila
 } from "../services/maquilaService.js";
 
 const router = express.Router();
@@ -44,6 +46,19 @@ function getSucursalId(req) {
 }
 
 router.use(requireUser);
+
+// GET /api/maquila/config — configuración maquila (requiere_acreditar, etc.)
+router.get("/config", async (req, res) => {
+  try {
+    const empresaId = getEmpresaId(req);
+    const config = await getConfiguracion(empresaId);
+    const requiere_acreditar = config.maquila_requiere_acreditar !== false;
+    res.json({ requiere_acreditar });
+  } catch (err) {
+    console.error("❌ Error obteniendo config maquila:", err);
+    res.status(500).json({ error: "Error al obtener configuración" });
+  }
+});
 
 // GET /api/maquila/cuentas-corrientes — resumen de todas las cuentas (trigo/harina por cliente)
 router.get("/cuentas-corrientes", async (req, res) => {
@@ -143,6 +158,16 @@ router.post("/recepcion-directa", async (req, res) => {
     const empresaId = getEmpresaId(req);
     const usuarioId = getUsuarioId(req);
     const result = await registrarRecepcionDirecta(empresaId, usuarioId, req.body);
+    const config = await getConfiguracion(empresaId);
+    if (config.maquila_requiere_acreditar === false) {
+      await autoAcreditarRecepcionMaquila(
+        empresaId,
+        usuarioId,
+        result.id,
+        req.body.cliente_id,
+        result.neto
+      );
+    }
     res.json(result);
   } catch (err) {
     console.error("❌ Error en recepción directa:", err);

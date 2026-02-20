@@ -31,6 +31,9 @@
     <li class="nav-item">
       <a class="nav-link" id="tabBodegasLink" data-toggle="tab" href="#tabBodegas" role="tab">Bodegas &amp; Silos</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tabConfigLink" data-toggle="tab" href="#tabConfig" role="tab">Configuración</a>
+    </li>
   </ul>
 
   <div class="tab-content pt-3" id="mantenedoresTabsContent">
@@ -473,6 +476,25 @@
               <tbody></tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tabConfig" role="tabpanel" aria-labelledby="tabConfigLink">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Configuración general</h4>
+          <p class="text-muted small">Opciones que afectan el flujo de trabajo. Los cambios se aplican de inmediato.</p>
+          <div class="form-group">
+            <div class="form-check mt-2">
+              <input type="checkbox" class="form-check-input" id="configMaquilaRequiereAcreditar" />
+              <label class="form-check-label" for="configMaquilaRequiereAcreditar">Requerir acreditación al ingresar trigo (módulo Maquila)</label>
+            </div>
+            <small class="form-text text-muted">
+              Si está <strong>desmarcado</strong>, el trigo que ingresa por maquila se suma automáticamente al cliente (no es necesario usar el botón &quot;Acreditar&quot;). Ideal para operación express.
+            </small>
+          </div>
+          <button type="button" class="btn btn-primary" id="btnGuardarConfig">Guardar configuración</button>
         </div>
       </div>
     </div>

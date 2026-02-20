@@ -41,8 +41,26 @@
       cargarSucursalesMant(),
       cargarBodegas(),
       cargarSilos(),
-      cargarSucursalesParaBodegas()
+      cargarSucursalesParaBodegas(),
+      cargarConfig()
     ]);
+  }
+
+  async function cargarConfig() {
+    const cb = document.getElementById("configMaquilaRequiereAcreditar");
+    if (!cb) return;
+    try {
+      const res = await fetch("/api/empresa/config", { credentials: "include" });
+      if (!res.ok) {
+        cb.checked = true;
+        return;
+      }
+      const config = await res.json();
+      cb.checked = config.maquila_requiere_acreditar !== false;
+    } catch (err) {
+      console.warn("No se pudo cargar configuración:", err);
+      cb.checked = true;
+    }
   }
 
   async function cargarProveedores() {
@@ -455,6 +473,27 @@
       Swal.fire("✅ Silo creado", "", "success");
     } catch (err) {
       Swal.fire("❌ Error", err.message, "error");
+    }
+  });
+
+  document.getElementById("tabConfigLink")?.addEventListener("click", () => {
+    cargarConfig();
+  });
+
+  document.getElementById("btnGuardarConfig")?.addEventListener("click", async () => {
+    const cb = document.getElementById("configMaquilaRequiereAcreditar");
+    if (!cb) return;
+    try {
+      const res = await fetch("/api/empresa/config", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ maquila_requiere_acreditar: cb.checked })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      if (window.Swal) Swal.fire("Guardado", "Configuración actualizada.", "success");
+    } catch (err) {
+      if (window.Swal) Swal.fire("Error", err.message || "No se pudo guardar", "error");
     }
   });
 
